@@ -26,7 +26,8 @@ public class Board extends JPanel implements ActionListener {
     int nummajorRed = 3;
     int numColoRed = 2;
     int numGeneralRed = 1;
-    int numMarshallRed = 1;
+    int numMarshalRed = 1;
+    private boolean redPlayerTurn = true;
 
     ImageIcon icon = new ImageIcon(new BufferedImage(space, space, BufferedImage.TYPE_INT_ARGB));
 
@@ -98,85 +99,145 @@ public class Board extends JPanel implements ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
+        if (redPlayerTurn == true) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < c1squares[i].length; j++) {
+                    if (e.getSource().equals(c1squares[j][i])) {
+                        JOptionPane.showMessageDialog(null, "You may Place " + numBombsRed + " Bombs, " + numFlagRed
+                                + " Flag, " + numSpyRed + " Spy, " + numMinersRed + " Miners, " + numScoutsRed + " scouts, "
+                                + numSeargentsRed + " Seargents, " + numLieuRed + " Lieutenants, " + numCaptainsRed + " Captains, "
+                                + nummajorRed + " Majors, " + numColoRed + " Colonels, " + numGeneralRed + " Generals "
+                                + numMarshalRed + " Marshall");
+                        String[] options = {"F", "B", "S", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+                        String switching = (String) JOptionPane.showInputDialog(null, "What piece would you like to switch? ", String.valueOf(options),
+                                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                        switch (switching) {
+                            case "B":
+                                if (numBombsRed > 0) {
+                                    c1squares[j][i].setText("B");
+                                    numBombsRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Bombs remaining. Try again!");
+                                }
 
-        for (int i = 0; i < c1squares.length; i++) {
-            for (int j = 0; j < c1squares[i].length; j++) {
-                if (e.getSource().equals(c1squares[j][i])) {
-                    JOptionPane.showMessageDialog(null, "You may Place " + numBombsRed + " Bombs, " + numFlagRed
-                            + " Flag, " + numScoutsRed + " Scouts, " + numMinersRed + " Miners, " + numSpyRed + " Spy, "
-                            + numSeargentsRed + " Seargents, " + numLieuRed + " Lieutenants, " + numCaptainsRed + " Captains, "
-                            + nummajorRed + " Majors, " + numColoRed + " Colonels, " + numGeneralRed + " Generals "
-                            + numMarshallRed + " Marshall");
-                    String[] options = {"F", "B", "S", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
-                    String switching = (String) JOptionPane.showInputDialog(null, "What piece would you like to switch? ", String.valueOf(options),
-                            JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-                    switch(switching) {
-                        case "B":
-                            c1squares[j][i].setText("B");
-                            numBombsRed--;
+                                break;
+                            case "F":
+                                if (numFlagRed > 0) {
+                                    c1squares[j][i].setText("F");
+                                    numFlagRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have already placed your flag. Try again!");
+                                }
 
-                            break;
-                        case "F":
-                            c1squares[j][i].setText("F");
-                            numFlagRed--;
+                                break;
+                            case "S":
+                                if(numSpyRed > 0) {
+                                    c1squares[j][i].setText("S");
+                                    numSpyRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have already placed your Spy. Try again!");
+                                }
 
-                            break;
-                        case "S":
-                            c1squares[j][i].setText("S");
-                            numSpyRed--;
+                                break;
+                            case "2":
+                                if (numScoutsRed > 0) {
+                                    c1squares[j][i].setText("2");
+                                    numScoutsRed--;
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "You have no scouts remaining. Try again!");
+                                }
 
-                            break;
-                        case "2":
-                            c1squares[j][i].setText("2");
-                            numScoutsRed--;
+                                break;
+                            case "3":
+                                if (numMinersRed > 0) {
+                                    c1squares[j][i].setText("3");
+                                    numMinersRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Miners remaining. Try again!");
+                                }
 
-                            break;
-                        case "3":
-                            c1squares[j][i].setText("3");
-                            numMinersRed--;
+                                break;
+                            case "4":
+                                if (numSeargentsRed > 0) {
+                                    c1squares[j][i].setText("4");
+                                    numSeargentsRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Seargents remaining. Try again!");
+                                }
 
-                            break;
-                        case "4":
-                            c1squares[j][i].setText("4");
-                            numSeargentsRed--;
+                                break;
+                            case "5":
+                                if (numLieuRed > 0) {
+                                    c1squares[j][i].setText("5");
+                                    numLieuRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Lieutenants remaining. Try again!");
+                                }
 
-                            break;
-                        case "5":
-                            c1squares[j][i].setText("5");
-                            numLieuRed--;
+                                break;
+                            case "6":
+                                if (numCaptainsRed > 0) {
+                                    c1squares[j][i].setText("6");
+                                    numCaptainsRed--;
+                                }else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Captains remaining. Try again!");
+                                }
 
-                            break;
-                        case "6":
-                            c1squares[j][i].setText("6");
-                            numCaptainsRed--;
+                                break;
+                            case "7":
+                                if (nummajorRed > 0) {
+                                    c1squares[j][i].setText("7");
+                                    nummajorRed--;
+                                }
+                                else {
+                                    JOptionPane.showMessageDialog(null, "You have no Majors remaining. Try again!");
+                                }
 
-                            break;
-                        case "7":
-                            c1squares[j][i].setText("7");
-                            nummajorRed--;
+                                break;
+                            case "8":
+                                if (numColoRed > 0) {
+                                    c1squares[j][i].setText("8");
+                                    numColoRed--;
+                                }else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Colonels remaining. Try again!");
+                                }
 
-                            break;
-                        case "8":
-                            c1squares[j][i].setText("8");
-                            numColoRed--;
+                                break;
+                            case "9":
+                                if (numGeneralRed > 0) {
+                                    c1squares[j][i].setText("9");
+                                    numGeneralRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Generals remaining. Try again!");
+                                }
 
-                            break;
-                        case "9":
-                            c1squares[j][i].setText("9");
-                            numGeneralRed--;
+                                break;
+                            case "10":
+                                if(numMarshalRed > 0) {
+                                    c1squares[j][i].setText("10");
+                                    numMarshalRed--;
+                                } else
+                                {
+                                    JOptionPane.showMessageDialog(null, "You have no Marshals remaining. Try again!");
+                                }
 
-                            break;
-                        case "10":
-                            c1squares[j][i].setText("10");
-                            numMarshallRed--;
-
-                            break;
-                    }
+                                break;
+                        }
 
                     }
                 }
             }
         }
+    }
 
 
     public static void main(String[] args) {
