@@ -2,8 +2,19 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.*;
 
+/**
+ * This class is a (main) run class for our Stratego Game
+ *
+ * @author - Luke Seeterlin, Hayden Garrett, Austin Ackerman
+ * @version - 3/29/2021
+ **/
 public class Run {
 
+    /**
+     * main method to run the Stratego game
+     *
+     * @param args
+     */
     public static void main(String[] args) {
 
         Board gb = new Board();
