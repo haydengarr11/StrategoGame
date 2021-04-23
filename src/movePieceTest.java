@@ -3,6 +3,7 @@ import org.w3c.dom.events.Event;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import static org.junit.Assert.*;
 
 /**
  * movePiece Tester.
@@ -28,7 +29,19 @@ public class movePieceTest {
      */
     @Test
     public void testMovePieceRed() throws Exception {
-//TODO: Test goes here...
+//        Board b = new Board();
+//        b.initializeGui();
+//        b.getGui();
+//        b.c1squares[3][2].doClick();
+//        assertEquals("3",b.c1squares[3][2].getText());
+//        b.redTotal = 0;
+//        b.c1squares[6][2].doClick();
+//        b.blueTotal = 0;
+//        b.gameStatus = true;
+//        b.c1squares[6][2].doClick();
+//        b.c1squares[5][2].doClick();
+//        b.c1squares[3][2].doClick();
+//        assertEquals("3", b.c1squares[4][2].getText());
     }
 
     /**

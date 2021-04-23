@@ -8,14 +8,11 @@ import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.views.AbstractView;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import  javax.swing.*;
+import java.awt.event.*;
+import java.security.Key;
+import javax.swing.*;
 
 import static org.junit.Assert.*;
-
 /**
  * Board Tester.
  *
@@ -23,6 +20,7 @@ import static org.junit.Assert.*;
  * @since <pre>Apr 22, 2021</pre>
  * @version 1.0
  */
+
 public class BoardTest {
 
     @Before
@@ -105,20 +103,390 @@ public class BoardTest {
      *
      */
     @Test
-    public void testActionPerformedE() throws Exception {
+    public void testSetupFlagRed() throws Exception {
+        Board b = new Board();
+        JFrame j = new JFrame();
+        j.add(b.getGui());
+        b.c1squares[1][2].doClick();
+        assertTrue(b.c1squares[1][2].getText().equals("F"));
+        b.c1squares[2][1].doClick();
+        assertFalse(b.c1squares[2][1].equals("F"));
+
+    }
+
+    @Test
+    public void testSetupBombRed() throws Exception {
         Board b = new Board();
         b.initializeGui();
-        AbstractAction e = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                e.setSource(b.c1squares[1][2]);
+        b.getGui();
+        b.c1squares[3][2].doClick();
+        assertTrue(b.c1squares[3][2].getText() == "B");
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 5; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("B", b.c1squares[j][i].getText());
             }
-        };
-        Robot r = new Robot();
-        r.keyPress(KeyEvent.VK_ENTER);
-        r.keyPress(KeyEvent.VK_ENTER);
-        assertTrue(b.c1squares[1][2].getText() == "F");
+        }
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("B"));
     }
+    @Test
+    public void testSetupSpyRed() throws Exception {
+        Board b = new Board();
+        Robot r = new Robot();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[2][1].doClick();
+        assertTrue(b.c1squares[2][1].getText().equals("S"));
+        b.c1squares[4][2].doClick();
+        assertFalse(b.c1squares[4][2].getText().equals("S"));
+    }
+    @Test
+    public void testSetup2Red() throws Exception {
+        Board b = new Board();
+        Robot r = new Robot();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[2][2].doClick();
+        assertTrue(b.c1squares[2][2].getText().equals("2"));
+        for (int i = 3; i < 4; i++) {
+            for (int j = 0; j < 7; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("2", b.c1squares[j][i].getText());
+            }
+            }
+        b.c1squares[6][3].doClick();
+        assertFalse(b.c1squares[6][3].equals("2"));
+    }
+    @Test
+    public void testSetup3Red() throws Exception {
+        Board b = new Board();
+        Robot r = new Robot();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[3][3].doClick();
+        assertTrue(b.c1squares[3][3].getText().equals("3"));
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 4; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("3", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("3"));
+        assertFalse(b.c1squares[4][6].equals("3"));
+    }
+    @Test
+    public void testSetup4() throws Exception {
+            Board b = new Board();
+            b.initializeGui();
+            b.getGui();
+            b.c1squares[5][2].doClick();
+            assertTrue(b.c1squares[5][2].getText().equals("4"));
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 3; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("4", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("4"));
+
+    }
+        @Test
+        public void testSetup5 () throws Exception {
+            Board b = new Board();
+            b.initializeGui();
+            b.getGui();
+            b.c1squares[8][2].doClick();
+            assertTrue(b.c1squares[8][2].getText().equals("5"));
+            for (int i = 0; i < 1; i++) {
+                for (int j = 0; j < 3; j++) {
+                    b.c1squares[j][i].doClick();
+                    assertEquals("5", b.c1squares[j][i].getText());
+                }
+            }
+            b.c1squares[5][3].doClick();
+            assertFalse(b.c1squares[5][3].equals("5"));
+
+    }
+    @Test
+    public void testSetup6Red () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[8][2].doClick();
+        assertTrue(b.c1squares[8][2].getText().equals("6"));
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 3; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("6", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("6"));
+
+    }
+    @Test
+    public void testSetup7Red () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[8][2].doClick();
+        assertTrue(b.c1squares[8][2].getText().equals("7"));
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 2; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("7", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("7"));
+
+    }
+    @Test
+    public void testSetup8Red () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[8][2].doClick();
+        assertTrue(b.c1squares[8][2].getText().equals("8"));
+        for (int i = 0; i < 1; i++) {
+            for (int j = 0; j < 1; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("8", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("8"));
+
+    }
+    @Test
+    public void testSetup9Red () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[8][2].doClick();
+        assertTrue(b.c1squares[8][2].getText().equals("9"));
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("9"));
+
+    }
+    @Test
+    public void testSetup10Red () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.c1squares[8][2].doClick();
+        assertTrue(b.c1squares[8][2].getText().equals("10"));
+        b.c1squares[5][3].doClick();
+        assertFalse(b.c1squares[5][3].equals("10"));
+
+    }
+
+    @Test
+    public void testSetupFlagBlue() throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("F"));
+        b.c1squares[1][8].doClick();
+        assertFalse(b.c1squares[1][8].equals("F"));
+
+    }
+
+    @Test
+    public void testSetupBombblue() throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("B"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 5; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("B", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("B"));
+    }
+    @Test
+    public void testSetupSpyblue() throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("S"));
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("S"));
+    }
+    @Test
+    public void testSetup2blue() throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("2"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 7; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("2", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("2"));
+    }
+    @Test
+    public void testSetup3blue() throws Exception {
+        Board b = new Board();
+        Robot r = new Robot();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("3"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 4; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("3", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("3"));
+    }
+    @Test
+    public void testSetup4blue() throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("4"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 3; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("4", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("4"));
+
+    }
+    @Test
+    public void testSetup5blue () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("5"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 3; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("5", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("5"));
+    }
+    @Test
+    public void testSetup6blue () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("6"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 3; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("6", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("6"));
+
+    }
+    @Test
+    public void testSetup7blue () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("7"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 2; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("7", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("7"));
+
+    }
+    @Test
+    public void testSetup8blue () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[0][8].doClick();
+        assertTrue(b.c1squares[0][8].getText().equals("8"));
+        for (int i = 7; i < 8; i++) {
+            for (int j = 0; j < 1; j++) {
+                b.c1squares[j][i].doClick();
+                assertEquals("8", b.c1squares[j][i].getText());
+            }
+        }
+        b.c1squares[2][8].doClick();
+        assertFalse(b.c1squares[2][8].equals("8"));
+
+    }
+    @Test
+    public void testSetup9Blue () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[2][8].doClick();
+        assertTrue(b.c1squares[2][8].getText().equals("9"));
+        b.c1squares[3][6].doClick();
+        assertFalse(b.c1squares[3][6].equals("9"));
+
+    }
+    @Test
+    public void testSetup10Blue () throws Exception {
+        Board b = new Board();
+        b.initializeGui();
+        b.getGui();
+        b.nextTurn();
+        b.redTotal = 0;
+        b.c1squares[3][6].doClick();
+        assertTrue(b.c1squares[3][6].getText().equals("10"));
+        assertTrue(b.c1squares[3][6].getBackground().equals(Color.BLUE));
+        b.c1squares[2][6].doClick();
+        assertFalse(b.c1squares[2][6].equals("10"));
+
+    }
+
 
     /**
      *

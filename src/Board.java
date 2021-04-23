@@ -234,14 +234,14 @@ public class Board extends JPanel implements ActionListener {
     protected void resetGame(){
         for(int i = 0; i < 10; i++) {
             for(int j = 0; j < 10; j++) {
-                c1squares[j][i].setText("");
+                c1squares[i][j].setText("");
                 if (j <= 3) {
-                    c1squares[j][i].setBackground(Color.RED);
+                    c1squares[i][j].setBackground(Color.RED);
                 } else if (j > 5) {
-                    c1squares[j][i].setBackground(Color.BLUE);
+                    c1squares[i][j].setBackground(Color.BLUE);
 
                 } else {
-                    c1squares[j][i].setBackground(Color.GRAY);
+                    c1squares[i][j].setBackground(Color.GRAY);
                 }
                 c1squares[j][i].addActionListener(this);
             }
