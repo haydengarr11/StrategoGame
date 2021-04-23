@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -15,11 +16,11 @@ import javax.swing.border.*;
  **********/
 public class Board extends JPanel implements ActionListener {
 
-    /** Board JPanel initialization */
+    /** Stratego.Board JPanel initialization */
     private final JPanel board = new JPanel(new BorderLayout(3, 3));
 
     /** JButton initialization for square spaces in the board */
-    private JButton[][] c1squares = new JButton[10][10];
+    protected JButton[][] c1squares = new JButton[10][10];
 
     /** JPanel initialization for board that contains squares */
     private JPanel c1Board;
@@ -29,6 +30,9 @@ public class Board extends JPanel implements ActionListener {
 
     /** reset JButton initialization */
     private JButton resetButton = new JButton("Reset Game");
+
+    /** start game JButton Initialization */
+    private JButton startGame = new JButton("Start Game");
 
     /** toolbar initialization for GUI */
     JToolBar tool = new JToolBar();
@@ -79,7 +83,7 @@ public class Board extends JPanel implements ActionListener {
     int numMarshalRed = 1;
 
     /** Initialization of boolean if it is red teams turn or blue teams turn */
-    private boolean redPlayerTurn = true;
+    protected boolean redPlayerTurn = true;
 
     /** Initialization of number of bombs for blue team */
     int numBombsBlue = 6;
@@ -123,6 +127,18 @@ public class Board extends JPanel implements ActionListener {
     /** Initialization to determine how many pieces are placed for blue team */
     int kk = 0;
 
+    /** Initialize for num of red pieces remaining **/
+    int redTotal = 40;
+
+    /** Initialize for num of red pieces remaining **/
+    int blueTotal = 40;
+
+    boolean gameStatus = false;
+
+    ArrayList<JButton> redPiecesB = new ArrayList<>();
+
+    ArrayList<JButton> bluePiecesB = new ArrayList<>();
+
     /** Initialization for icons for each square on the board */
     ImageIcon icon = new ImageIcon(new BufferedImage(space, space, BufferedImage.TYPE_INT_ARGB));
 
@@ -138,8 +154,8 @@ public class Board extends JPanel implements ActionListener {
      *
      * @return - returns board as a JComponent
      */
-    public final JComponent getGui() {
-        return board;
+    public JPanel getGui() {
+        return this.board;
     }
 
     /**
@@ -152,7 +168,11 @@ public class Board extends JPanel implements ActionListener {
         board.add(tool, BorderLayout.PAGE_START);
         tool.add(title);
         tool.addSeparator();
+        tool.add(startGame);
+        startGame.addActionListener(this);
+        tool.addSeparator();
         tool.add(resetButton);
+        resetButton.addActionListener(this);
         c1Board = new JPanel(new GridLayout(0, 10));
         c1Board.setBorder(new LineBorder(Color.BLACK));
         board.add(c1Board);
@@ -211,10 +231,19 @@ public class Board extends JPanel implements ActionListener {
     /**
      * This method implements the reset button and resets the game whenever clicked
      */
-    private void resetGame(){
+    protected void resetGame(){
         for(int i = 0; i < 10; i++) {
             for(int j = 0; j < 10; j++) {
-                c1squares[i][j].setText("");
+                c1squares[j][i].setText("");
+                if (j <= 3) {
+                    c1squares[j][i].setBackground(Color.RED);
+                } else if (j > 5) {
+                    c1squares[j][i].setBackground(Color.BLUE);
+
+                } else {
+                    c1squares[j][i].setBackground(Color.GRAY);
+                }
+                c1squares[j][i].addActionListener(this);
             }
         }
         redPlayerTurn = true;
@@ -244,19 +273,25 @@ public class Board extends JPanel implements ActionListener {
         numMarshalBlue = 1;
         jj = 0;
         kk = 0;
+        redTotal = 40;
+        blueTotal = 40;
     }
 
     /**
      * This method is used to determine if it is red teams turn or not
      *
-     * @return - true or false depending on which teams turn it is
      */
-    private boolean isRedPlayerTurn(){
-        if (redPlayerTurn = true) {
+    protected boolean nextTurn(){
+        hidePieces hide = new hidePieces();
+        if (redPlayerTurn) {
             redPlayerTurn = false;
-        }else {
+        }else if (!redPlayerTurn) {
             redPlayerTurn = true;
+
         }
+        return redPlayerTurn;
+    }
+    public boolean getPlayerturn(){
         return redPlayerTurn;
     }
 
@@ -267,7 +302,11 @@ public class Board extends JPanel implements ActionListener {
      * @param e - action event of clicking a square to place pieces
      */
     public void actionPerformed(ActionEvent e) {
-        if (redPlayerTurn) {
+
+        if (e.getSource() == resetButton) {
+            resetGame();
+        }
+        if (redPlayerTurn && !gameStatus) {
             if (jj == 0){
                 JOptionPane.showMessageDialog(null,"It is Red's turn to pick");
                 jj++;
@@ -285,12 +324,21 @@ public class Board extends JPanel implements ActionListener {
                                 JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                         if (numBombsRed + numFlagRed + numSpyRed + numGeneralRed + numColoRed + numLieuRed +
                                 numSeargentsRed + nummajorRed + numMinersRed + numMarshalRed + numCaptainsRed + numScoutsRed > 0) {
+                            if (c1squares[j][i].getText().equals("F") || c1squares[j][i].getText().equals("B") ||
+                                    c1squares[j][i].getText().equals("S") || c1squares[j][i].getText().equals("2") ||
+                                    c1squares[j][i].getText().equals("3") || c1squares[j][i].getText().equals("4") ||
+                                    c1squares[j][i].getText().equals("5") || c1squares[j][i].getText().equals("6") ||
+                                    c1squares[j][i].getText().equals("7") || c1squares[j][i].getText().equals("8") ||
+                                    c1squares[j][i].getText().equals("9") || c1squares[j][i].getText().equals("10")) {
+                                JOptionPane.showMessageDialog(null, "Piece is already placed there: try again");
+                            }
 
                             switch (switching) {
                                 case "B":
                                     if (numBombsRed > 0) {
                                         c1squares[j][i].setText("B");
                                         numBombsRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Bombs remaining. Try again!");
                                     }
@@ -300,6 +348,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numFlagRed > 0) {
                                         c1squares[j][i].setText("F");
                                         numFlagRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have already placed your flag. Try again!");
                                     }
@@ -309,6 +358,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numSpyRed > 0) {
                                         c1squares[j][i].setText("S");
                                         numSpyRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have already placed your Spy. Try again!");
                                     }
@@ -318,6 +368,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numScoutsRed > 0) {
                                         c1squares[j][i].setText("2");
                                         numScoutsRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no scouts remaining. Try again!");
                                     }
@@ -327,6 +378,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numMinersRed > 0) {
                                         c1squares[j][i].setText("3");
                                         numMinersRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Miners remaining. Try again!");
                                     }
@@ -336,6 +388,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numSeargentsRed > 0) {
                                         c1squares[j][i].setText("4");
                                         numSeargentsRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Seargents remaining. Try again!");
                                     }
@@ -345,6 +398,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numLieuRed > 0) {
                                         c1squares[j][i].setText("5");
                                         numLieuRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Lieutenants remaining. Try again!");
                                     }
@@ -354,6 +408,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numCaptainsRed > 0) {
                                         c1squares[j][i].setText("6");
                                         numCaptainsRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Captains remaining. Try again!");
                                     }
@@ -363,6 +418,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (nummajorRed > 0) {
                                         c1squares[j][i].setText("7");
                                         nummajorRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Majors remaining. Try again!");
                                     }
@@ -372,6 +428,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numColoRed > 0) {
                                         c1squares[j][i].setText("8");
                                         numColoRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Colonels remaining. Try again!");
                                     }
@@ -381,6 +438,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numGeneralRed > 0) {
                                         c1squares[j][i].setText("9");
                                         numGeneralRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Generals remaining. Try again!");
                                     }
@@ -390,12 +448,14 @@ public class Board extends JPanel implements ActionListener {
                                     if (numMarshalRed > 0) {
                                         c1squares[j][i].setText("10");
                                         numMarshalRed--;
+                                        redTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Marshals remaining. Try again!");
                                     }
 
                                     break;
                             }
+
 
                         } else {
                             JOptionPane.showMessageDialog(null, "It is blue players turn!");
@@ -406,15 +466,16 @@ public class Board extends JPanel implements ActionListener {
                 }
             }
         }
-        else if (!redPlayerTurn){
-            if (kk == 0) {
+        else if (!redPlayerTurn && !gameStatus){
+            if (kk == 0 && redTotal == 0) {
                 JOptionPane.showMessageDialog(null, "It is Blue's turn to pick");
                 kk++;
+
             }
             for (int k = 6; k < 10; k++){
-                for (int m = 0; m <c1squares[k].length; m++){
+                for (int m = 0; m <c1squares[k].length; m++) {
                     if (e.getSource().equals(c1squares[m][k])) {
-                        JOptionPane.showMessageDialog(null, "You may Place " + numBombsBlue + " Bombs, " + numFlagBlue+ " Flag, " + numSpyBlue + " Spy, " + numMinersBlue + " Miners, " + numScoutsBlue + " scouts, "
+                        JOptionPane.showMessageDialog(null, "You may Place " + numBombsBlue + " Bombs, " + numFlagBlue + " Flag, " + numSpyBlue + " Spy, " + numMinersBlue + " Miners, " + numScoutsBlue + " scouts, "
                                 + numSeargentsBlue + " Seargents, " + numLieuBlue + " Lieutenants, " + numCaptainsBlue + " Captains, "
                                 + numMajorBlue + " Majors, " + numColoBlue + " Colonels, " + numGeneralBlue + " Generals "
                                 + numMarshalBlue + " Marshall");
@@ -423,12 +484,21 @@ public class Board extends JPanel implements ActionListener {
                                 JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                         if (numBombsBlue + numFlagBlue + numSpyBlue + numGeneralBlue + numColoBlue + numLieuBlue +
                                 numSeargentsBlue + numMajorBlue + numMinersBlue + numMarshalBlue + numCaptainsBlue + numScoutsBlue > 0) {
+                            if (c1squares[m][k].getText().equals("F") || c1squares[m][k].getText().equals("B") ||
+                                    c1squares[m][k].getText().equals("S") || c1squares[m][k].getText().equals("2") ||
+                                    c1squares[m][k].getText().equals("3") || c1squares[m][k].getText().equals("4") ||
+                                    c1squares[m][k].getText().equals("5") || c1squares[m][k].getText().equals("6") ||
+                                    c1squares[m][k].getText().equals("7") || c1squares[m][k].getText().equals("8") ||
+                                    c1squares[m][k].getText().equals("9") || c1squares[m][k].getText().equals("10")) {
+                                JOptionPane.showMessageDialog(null, "Piece is already placed there: try again");
+                            }
 
                             switch (switching) {
                                 case "B":
                                     if (numBombsBlue > 0) {
                                         c1squares[m][k].setText("B");
                                         numBombsBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Bombs remaining. Try again!");
                                     }
@@ -438,6 +508,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numFlagBlue > 0) {
                                         c1squares[m][k].setText("F");
                                         numFlagBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have already placed your flag. Try again!");
                                     }
@@ -447,6 +518,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numSpyBlue > 0) {
                                         c1squares[m][k].setText("S");
                                         numSpyBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have already placed your Spy. Try again!");
                                     }
@@ -456,6 +528,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numScoutsBlue > 0) {
                                         c1squares[m][k].setText("2");
                                         numScoutsBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no scouts remaining. Try again!");
                                     }
@@ -465,6 +538,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numMinersBlue > 0) {
                                         c1squares[m][k].setText("3");
                                         numMinersBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Miners remaining. Try again!");
                                     }
@@ -474,6 +548,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numSeargentsBlue > 0) {
                                         c1squares[m][k].setText("4");
                                         numSeargentsBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Seargents remaining. Try again!");
                                     }
@@ -483,6 +558,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numLieuBlue > 0) {
                                         c1squares[m][k].setText("5");
                                         numLieuBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Lieutenants remaining. Try again!");
                                     }
@@ -492,6 +568,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numCaptainsBlue > 0) {
                                         c1squares[m][k].setText("6");
                                         numCaptainsBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Captains remaining. Try again!");
                                     }
@@ -501,6 +578,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numMajorBlue > 0) {
                                         c1squares[m][k].setText("7");
                                         numMajorBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Majors remaining. Try again!");
                                     }
@@ -510,6 +588,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numColoBlue > 0) {
                                         c1squares[m][k].setText("8");
                                         numColoBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Colonels remaining. Try again!");
                                     }
@@ -519,6 +598,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numGeneralBlue > 0) {
                                         c1squares[m][k].setText("9");
                                         numGeneralBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Generals remaining. Try again!");
                                     }
@@ -528,6 +608,7 @@ public class Board extends JPanel implements ActionListener {
                                     if (numMarshalBlue > 0) {
                                         c1squares[m][k].setText("10");
                                         numMarshalBlue--;
+                                        blueTotal--;
                                     } else {
                                         JOptionPane.showMessageDialog(null, "You have no Marshals remaining. Try again!");
                                     }
@@ -535,16 +616,107 @@ public class Board extends JPanel implements ActionListener {
                                     break;
                             }
 
-                        }
-                        else {
+                        } else {
                             JOptionPane.showMessageDialog(null, "You have placed all your pieces!");
+                            redPlayerTurn = true;
+
                         }
 
                     }
                 }
             }
         }
+
+        if (e.getSource().equals(startGame) && redTotal == 0 && blueTotal == 0) {
+            gameStatus = true;
+            if (redPlayerTurn) {
+                JOptionPane.showMessageDialog(null, "It is red players move");
+            }
+        }
+
+
+        if (gameStatus && redTotal == 0 && blueTotal == 0) {
+            movePiece move = new movePiece();
+            for (int j = 0; j < 10; j++) {
+                for (int i = 0; i < 10; i++) {
+                    if (c1squares[i][j].getBackground().equals(Color.RED) && e.getSource().equals(c1squares[i][j]) && redPlayerTurn) {
+                        if (c1squares[i][j].getText().equals("S") || c1squares[i][j].getText().equals("2") ||
+                                c1squares[i][j].getText().equals("3") || c1squares[i][j].getText().equals("4") ||
+                                c1squares[i][j].getText().equals("5") || c1squares[i][j].getText().equals("6") ||
+                                c1squares[i][j].getText().equals("7") || c1squares[i][j].getText().equals("8") ||
+                                c1squares[i][j].getText().equals("9") || c1squares[i][j].getText().equals("10")) {
+                            String[] options = {"Up", "Right", "Down", "Left"};
+                            String switching = (String) JOptionPane.showInputDialog(null, "Which Direction?", String.valueOf(options),
+                                    JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                            switch (switching) {
+                                case "Up":
+
+                                    move.movePieceRed(c1squares[i][j], c1squares[i][j - 1]);
+                                    nextTurn();
+
+
+                                    break;
+
+                                case "Right":
+                                    move.movePieceRed(c1squares[i][j], c1squares[i + 1][j]);
+                                    nextTurn();
+                                    break;
+
+                                case "Down":
+                                    move.movePieceRed(c1squares[i][j], c1squares[i][j + 1]);
+                                    nextTurn();
+                                    break;
+
+                                case "Left":
+                                    move.movePieceRed(c1squares[i][j], c1squares[i - 1][j]);
+                                    nextTurn();
+                                    break;
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "You can't move this piece");
+                        }
+                    } else if (c1squares[i][j].getBackground() == Color.BLUE && e.getSource().equals(c1squares[i][j]) && !redPlayerTurn) {
+                        if (c1squares[i][j].getText().equals("S") || c1squares[i][j].getText().equals("2") ||
+                                c1squares[i][j].getText().equals("3") || c1squares[i][j].getText().equals("4") ||
+                                c1squares[i][j].getText().equals("5") || c1squares[i][j].getText().equals("6") ||
+                                c1squares[i][j].getText().equals("7") || c1squares[i][j].getText().equals("8") ||
+                                c1squares[i][j].getText().equals("9") || c1squares[i][j].getText().equals("10")) {
+                            String[] options = {"Up", "Right", "Down", "Left"};
+                            String switching = (String) JOptionPane.showInputDialog(null, "Which Direction?", String.valueOf(options),
+                                    JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+                            switch (switching) {
+                                case "Up":
+                                    move.movePieceBlue(c1squares[i][j], c1squares[i][j - 1]);
+                                    nextTurn();
+                                    break;
+
+                                case "Right":
+                                    move.movePieceBlue(c1squares[i][j], c1squares[i + 1][j]);
+                                    nextTurn();
+                                    break;
+
+                                case "Down":
+                                    move.movePieceBlue(c1squares[i][j], c1squares[i][j + 1]);
+                                    nextTurn();
+                                    break;
+
+                                case "Left":
+                                    move.movePieceBlue(c1squares[i][j], c1squares[i - 1][j]);
+                                    nextTurn();
+                                    break;
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "You can't move this piece");
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 }
+
 
